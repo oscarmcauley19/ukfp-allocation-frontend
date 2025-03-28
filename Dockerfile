@@ -1,6 +1,5 @@
-ARG DOCKERHUB
 # Base image
-FROM node:21-alpine3.18
+FROM node:22.14.0-bookworm-slim
 
 # set working directory
 WORKDIR /app

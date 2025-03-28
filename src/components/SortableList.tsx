@@ -36,14 +36,17 @@ export default function SortableList(props: SortableListProps) {
   }, []);
 
   const renderCard = useCallback(
-    (card: { id: number; name: string; ratio: number }, index: number) => {
+    (
+      card: { deaneryId: number; deaneryName: string; ratio: number },
+      index: number,
+    ) => {
       return (
         <DraggableCard
           key={card.id}
           index={index}
           maxIndex={props.ranking.length - 1}
-          id={card.id}
-          text={card.name}
+          id={card.deaneryId}
+          text={card.deaneryName}
           ratio={card.ratio}
           moveCard={moveCard}
         />

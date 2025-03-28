@@ -13,24 +13,24 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.14.18",
-    "@mui/material": "^5.14.18",
+    "@mui/icons-material": "^7.0.1",
+    "@mui/material": "^7.0.1",
     "@tailwindcss/vite": "^4.0.17",
     "chroma-js": "^2.4.2",
     "immutability-helper": "^3.1.1",
-    "react": "^18.2.0",
+    "react": "^19.1.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.19.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.4.1",
     "tailwindcss": "^4.0.17"
   },
   "devDependencies": {
     "@eslint/js": "^9.23.0",
     "@types/chroma-js": "^2.4.3",
     "@types/node": "^20.9.2",
-    "@types/react": "^18.2.37",
-    "@types/react-dom": "^18.2.15",
+    "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "@vitejs/plugin-react": "^4.2.0",
@@ -44,6 +44,6 @@
     "prettier-eslint": "^16.3.0",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.28.0",
-    "vite": "^5.0.0"
+    "vite": "^6.2.3"
   }
 }

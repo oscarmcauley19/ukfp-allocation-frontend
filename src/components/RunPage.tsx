@@ -28,7 +28,7 @@ export default function RunPage() {
     const runs = 100;
     if (ranking) {
       setLoading(true);
-      const ids = ranking.map((opt) => opt.id);
+      const ids = ranking.map((opt) => opt.deaneryId);
       const simResults: SimulationResults | null =
         await getSimulationResults(ids);
       if (simResults) {
@@ -38,7 +38,7 @@ export default function RunPage() {
             const intId: number = parseInt(id);
             return {
               id: intId,
-              name: deaneries[intId].name,
+              name: deaneries[intId].deaneryName,
               chance: (1.0 * simResults[intId]) / runs,
             };
           },
