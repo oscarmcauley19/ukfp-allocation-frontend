@@ -30,7 +30,7 @@ export default function RunPage() {
   const [progress, setProgress] = useState(0);
 
   useJobProgress(jobId, (update: JobProgress) => {
-    setProgress(update.progress);
+    setProgress(Math.round(update.progress));
   });
 
   useEffect(() => {
