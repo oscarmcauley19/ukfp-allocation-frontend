@@ -1,9 +1,15 @@
-import { SimulationResults } from "../models/simultation";
+import { DeaneryModel } from "../models/deanery";
+import {
+  DetailedSimulationResult,
+  SimulationJobResponse,
+  SimulationResults,
+} from "../models/simultation";
 
-export async function getSimulationResults(
+export async function createSimulationJob(
   ranking: number[],
-): Promise<SimulationResults | null> {
-  const response = await fetch("/api/simulate", {
+  runs: number,
+): Promise<string | null> {
+  const response = await fetch("/api/job", {
     method: "POST",
     mode: "cors", // no-cors, *cors, same-origin
     cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -14,8 +20,42 @@ export async function getSimulationResults(
     },
     redirect: "follow", // manual, *follow, error
     referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin,
-    body: JSON.stringify({ data: ranking }),
+    body: JSON.stringify({ user_ranking: ranking, runs }),
   });
-  const jsonResponse = response.json();
-  return jsonResponse;
+  const jsonResponse: SimulationJobResponse = await response.json();
+  return jsonResponse.job_id;
+}
+
+export async function getSimulationResults(
+  jobId: string,
+  runs: number,
+  deaneries: DeaneryModel[],
+): Promise<DetailedSimulationResult[]> {
+  const response = await fetch(`/api/job/${jobId}`, {
+    method: "GET",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    redirect: "follow",
+    referrerPolicy: "no-referrer",
+  });
+  if (!response.ok) {
+    throw new Error(
+      `Error fetching simulation results: ${response.statusText}`,
+    );
+  }
+  const jsonResponse: SimulationResults = await response.json();
+  const ids = Object.keys(jsonResponse);
+  const detailedResults: DetailedSimulationResult[] = ids.map((id: string) => {
+    const intId: number = parseInt(id);
+    return {
+      id: intId,
+      name: deaneries[intId - 1].deaneryName,
+      chance: (1.0 * jsonResponse[intId]) / runs,
+    };
+  });
+  return detailedResults;
 }

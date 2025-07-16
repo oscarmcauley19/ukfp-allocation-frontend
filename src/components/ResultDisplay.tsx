@@ -1,4 +1,5 @@
 import {
+  CircularProgress,
   Paper,
   Table,
   TableBody,
@@ -6,8 +7,11 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material";
 import { DetailedSimulationResult } from "../models/simultation";
+import { useJobProgress } from "../lib/hooks/useJobProgress";
+import { useState } from "react";
 
 export const ResultDisplay = ({
   results,

@@ -1,30 +1,38 @@
 .splitView {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 100px auto;
-    column-gap: 50px;
-    row-gap: 70px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 100px auto;
+  column-gap: 50px;
+  row-gap: 70px;
 }
 
 .leftSide {
-    /* margin: 30px; */
+  padding-top: 30px;
 }
 
 .rightSide {
-    /* margin: 30px; */
+  padding-top: 30px;
 }
 
 .textArea {
-    display: grid;
-    grid-template-rows: auto auto;
-    row-gap: 15px;
+  display: grid;
+  grid-template-rows: auto auto;
+  row-gap: 15px;
 }
 
 .rankingPanel {
-    display: flex;
-    flex-direction: column;
-    /* margin-top: 20px; */
-    /* margin-bottom: 20px; */
+  display: flex;
+  flex-direction: column;
+  /* margin-top: 20px; */
+  /* margin-bottom: 20px; */
+}
+
+.runSimulationControls {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
 }
 
 /* .splitView {

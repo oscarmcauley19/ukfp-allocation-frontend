@@ -8,6 +8,8 @@
     "build": "tsc && vite build",
     "lint": "eslint --report-unused-disable-directives --max-warnings 0 ./src",
     "lint:fix": "eslint --fix --report-unused-disable-directives --max-warnings 0 ./src",
+    "format": "prettier --check ./src",
+    "format:fix": "prettier --write ./src",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -26,6 +28,7 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.4.1",
+    "socket.io-client": "^4.8.1",
     "tailwindcss": "^4.0.17",
     "zod": "^3.24.3"
   },

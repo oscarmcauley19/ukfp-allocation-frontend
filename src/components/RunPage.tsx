@@ -1,51 +1,57 @@
-import { Button, CircularProgress, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getSimulationResults } from "../lib/simulation";
-import { getOptions } from "../lib/rankingOptions";
-import {
-  DetailedSimulationResult,
-  SimulationResults,
-} from "../models/simultation";
-import { DeaneryModel } from "../models/deanery";
-import { DndProvider } from "react-dnd";
-import SortableList from "./SortableList";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { ResultDisplay } from "./ResultDisplay";
+import {
+  Button,
+  CircularProgress,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
+import { DndProvider } from "react-dnd";
 
 import styles from "../styles/RunPage.module.css";
+import { createSimulationJob, getSimulationResults } from "../lib/simulation";
+import { useJobProgress } from "../lib/hooks/useJobProgress";
+import { getOptions } from "../lib/rankingOptions";
+import { DetailedSimulationResult, JobProgress } from "../models/simultation";
+import { DeaneryModel } from "../models/deanery";
+import { ResultDisplay } from "./ResultDisplay";
+import SortableList from "./SortableList";
 
 export default function RunPage() {
+  const runOptions = [10, 25, 50, 100];
+  const [runs, setRuns] = useState<number>(10);
   const [deaneries, setDeaneries] = useState<DeaneryModel[]>([]);
-  const [response, setResponse] = useState<DetailedSimulationResult[]>([]);
+  const [results, setResults] = useState<DetailedSimulationResult[]>([]);
   const [ranking, setRanking] = useState<DeaneryModel[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [jobId, setJobId] = useState<string | null>(null);
+  const [progress, setProgress] = useState(0);
+
+  useJobProgress(jobId, (update: JobProgress) => {
+    setProgress(update.progress);
+  });
 
   useEffect(() => {
     getOptions().then((options) => options && setDeaneries(options));
   }, []);
 
-  const handleClick = async () => {
-    const runs = 100;
+  useEffect(() => {
+    if (progress >= 100 && jobId) {
+      getSimulationResults(jobId, runs, deaneries).then((detailedResults) => {
+        setJobId(null);
+        setProgress(0);
+        setResults(detailedResults);
+      });
+    }
+  }, [progress]);
+
+  const handlePerformSimClicked = async () => {
     if (ranking) {
-      setLoading(true);
       const ids = ranking.map((opt) => opt.deaneryId);
-      const simResults: SimulationResults | null =
-        await getSimulationResults(ids);
-      if (simResults) {
-        const ids: string[] = Object.keys(simResults);
-        const detailedResults: DetailedSimulationResult[] = ids.map(
-          (id: string) => {
-            const intId: number = parseInt(id);
-            return {
-              id: intId,
-              name: deaneries[intId].deaneryName,
-              chance: (1.0 * simResults[intId]) / runs,
-            };
-          },
-        );
-        setResponse(detailedResults);
-      }
-      setLoading(false);
+      const jobId = await createSimulationJob(ids, runs);
+      setJobId(jobId);
     }
   };
 
@@ -69,7 +75,30 @@ export default function RunPage() {
           Re-order the deaneries below and click &apos;run similation&apos; to
           get your results.
         </Typography>
-        <Button onClick={handleClick}>Perform Simulation</Button>
+        <div className={styles.runSimulationControls}>
+          <FormControl sx={{ minWidth: 80 }}>
+            <InputLabel id="number-of-runs-label">Runs</InputLabel>
+            <Select
+              labelId="number-of-runs-label"
+              id="number-of-runs-select"
+              label="Runs"
+              value={runs}
+              onChange={(e) => {
+                const newValue = e.target.value;
+                if (typeof newValue === "number") {
+                  setRuns(newValue);
+                }
+              }}
+            >
+              {runOptions.map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <Button onClick={handlePerformSimClicked}>Perform Simulation</Button>
+        </div>
       </div>
       <div className={styles.leftSide}>
         <div className={styles.rankingPanel}>
@@ -82,10 +111,16 @@ export default function RunPage() {
       </div>
 
       <div className={styles.rightSide}>
-        {loading ? (
-          <CircularProgress />
+        {jobId ? (
+          <div>
+            <CircularProgress variant="determinate" value={progress} />
+            <Typography
+              sx={{ color: "primary" }}
+              variant="body1"
+            >{`${progress}%`}</Typography>
+          </div>
         ) : (
-          response?.length > 0 && <ResultDisplay results={response} />
+          results?.length > 0 && <ResultDisplay results={results} />
         )}
       </div>
     </div>
