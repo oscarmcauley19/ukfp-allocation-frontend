@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import {
+  Alert,
   Button,
   CircularProgress,
   FormControl,
@@ -19,6 +20,7 @@ import { DetailedSimulationResult, JobProgress } from "../models/simultation";
 import { DeaneryModel } from "../models/deanery";
 import { ResultDisplay } from "./ResultDisplay";
 import SortableList from "./SortableList";
+import { set } from "zod";
 
 export default function RunPage() {
   const runOptions = [10, 25, 50, 100];
@@ -28,6 +30,7 @@ export default function RunPage() {
   const [ranking, setRanking] = useState<DeaneryModel[]>([]);
   const [jobId, setJobId] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
   useJobProgress(jobId, (update: JobProgress) => {
     setProgress(Math.round(update.progress));
@@ -39,19 +42,40 @@ export default function RunPage() {
 
   useEffect(() => {
     if (progress >= 100 && jobId) {
-      getSimulationResults(jobId, runs, deaneries).then((detailedResults) => {
-        setJobId(null);
-        setProgress(0);
-        setResults(detailedResults);
-      });
+      getSimulationResults(jobId, runs, deaneries)
+        .then((detailedResults) => {
+          setJobId(null);
+          setProgress(0);
+          setResults(detailedResults);
+        })
+        .catch((error) => {
+          setError(
+            "An error occurred while fetching results. Please try again.",
+          );
+          console.error("Error fetching results:", error);
+        });
     }
   }, [progress]);
 
   const handlePerformSimClicked = async () => {
     if (ranking) {
       const ids = ranking.map((opt) => opt.deaneryId);
-      const jobId = await createSimulationJob(ids, runs);
-      setJobId(jobId);
+      try {
+        // Reset state before starting a new job
+        setError(null);
+        setJobId(null);
+        setProgress(0);
+        setResults([]);
+
+        // Create a new simulation job
+        const jobId = await createSimulationJob(ids, runs);
+        setJobId(jobId);
+      } catch (error) {
+        setError(
+          "An error occurred while starting the simulation. Please try again.",
+        );
+        console.error("Error creating simulation job:", error);
+      }
     }
   };
 
@@ -111,7 +135,11 @@ export default function RunPage() {
       </div>
 
       <div className={styles.rightSide}>
-        {jobId ? (
+        {error ? (
+          <Alert severity="error" sx={{ marginX: 4 }}>
+            {error}
+          </Alert>
+        ) : jobId ? (
           <div>
             <CircularProgress variant="determinate" value={progress} />
             <Typography
