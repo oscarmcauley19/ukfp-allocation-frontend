@@ -1,7 +1,5 @@
-import { useCallback, useEffect } from "react";
 import update from "immutability-helper";
 import { DraggableCard } from "./DraggableCard";
-import { getOptions } from "../lib/rankingOptions";
 import { DeaneryModel } from "../models/deanery";
 
 const style = {};
@@ -12,54 +10,42 @@ export interface ContainerState {
 
 type SortableListProps = {
   ranking: DeaneryModel[];
-  setRanking: React.Dispatch<React.SetStateAction<DeaneryModel[]>>;
+  updateRanking: (newRanking: DeaneryModel[]) => void;
 };
 
-export default function SortableList(props: SortableListProps) {
-  useEffect(() => {
-    getOptions().then((options: DeaneryModel[] | null) => {
-      if (options) {
-        props.setRanking(options);
-      }
+export default function SortableList({
+  ranking,
+  updateRanking,
+}: SortableListProps) {
+  const moveCard = (dragIndex: number, hoverIndex: number) => {
+    const updated = update(ranking, {
+      $splice: [
+        [dragIndex, 1],
+        [hoverIndex, 0, ranking[dragIndex] as DeaneryModel],
+      ],
     });
-  }, []);
+    console.log(ranking);
+    console.log("Updated ranking:", updated);
+    updateRanking(updated);
+  };
 
-  const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
-    props.setRanking((prevCards: DeaneryModel[]) =>
-      update(prevCards, {
-        $splice: [
-          [dragIndex, 1],
-          [hoverIndex, 0, prevCards[dragIndex] as DeaneryModel],
-        ],
-      }),
+  const renderCard = (card: DeaneryModel, index: number) => {
+    return (
+      <DraggableCard
+        key={card.deaneryId}
+        index={index}
+        maxIndex={ranking.length - 1}
+        id={card.deaneryId}
+        text={card.deaneryName}
+        ratio={card.ratio}
+        moveCard={moveCard}
+      />
     );
-  }, []);
-
-  const renderCard = useCallback(
-    (
-      card: { deaneryId: number; deaneryName: string; ratio: number },
-      index: number,
-    ) => {
-      return (
-        <DraggableCard
-          key={card.id}
-          index={index}
-          maxIndex={props.ranking.length - 1}
-          id={card.deaneryId}
-          text={card.deaneryName}
-          ratio={card.ratio}
-          moveCard={moveCard}
-        />
-      );
-    },
-    [],
-  );
+  };
 
   return (
     <>
-      <div style={style}>
-        {props.ranking.map((card, i) => renderCard(card, i))}
-      </div>
+      <div style={style}>{ranking.map((card, i) => renderCard(card, i))}</div>
     </>
   );
 }

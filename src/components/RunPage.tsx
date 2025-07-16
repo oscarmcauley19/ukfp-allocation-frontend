@@ -20,42 +20,38 @@ import { DetailedSimulationResult, JobProgress } from "../models/simultation";
 import { DeaneryModel } from "../models/deanery";
 import { ResultDisplay } from "./ResultDisplay";
 import SortableList from "./SortableList";
-import { set } from "zod";
 
 export default function RunPage() {
   const runOptions = [10, 25, 50, 100];
-  const [runs, setRuns] = useState<number>(10);
-  const [deaneries, setDeaneries] = useState<DeaneryModel[]>([]);
-  const [results, setResults] = useState<DetailedSimulationResult[]>([]);
-  const [ranking, setRanking] = useState<DeaneryModel[]>([]);
-  const [jobId, setJobId] = useState<string | null>(null);
-  const [progress, setProgress] = useState(0);
-  const [error, setError] = useState<string | null>(null);
 
-  useJobProgress(jobId, (update: JobProgress) => {
-    setProgress(Math.round(update.progress));
-  });
+  const updateRanking = (newRanking: DeaneryModel[]) => {
+    setRanking(newRanking);
+    localStorage.setItem(
+      "ranking",
+      newRanking.map((opt) => opt.deaneryId).join(","),
+    );
+  };
 
-  useEffect(() => {
-    getOptions().then((options) => options && setDeaneries(options));
-  }, []);
+  const validateRanking = (ranking: unknown[], deaneries: DeaneryModel[]) => {
+    const isAllNumbers = ranking.every((id) => typeof id === "number");
+    if (!isAllNumbers) return false;
 
-  useEffect(() => {
-    if (progress >= 100 && jobId) {
-      getSimulationResults(jobId, runs, deaneries)
-        .then((detailedResults) => {
-          setJobId(null);
-          setProgress(0);
-          setResults(detailedResults);
-        })
-        .catch((error) => {
-          setError(
-            "An error occurred while fetching results. Please try again.",
-          );
-          console.error("Error fetching results:", error);
-        });
+    const uniqueIds = new Set(ranking);
+    const sorted = [...ranking].sort((a, b) => a - b);
+    const allRankingsPresent = sorted.every((id, index) => id === index + 1);
+    return allRankingsPresent && uniqueIds.size === deaneries.length;
+  };
+
+  const getRankingFromLocalStorage = (deaneries: DeaneryModel[]) => {
+    const storedRanking = localStorage.getItem("ranking");
+    if (storedRanking) {
+      const rankingArray = storedRanking.split(",").map(Number);
+      if (validateRanking(rankingArray, deaneries)) {
+        return rankingArray.map((id) => deaneries[id - 1]);
+      }
     }
-  }, [progress]);
+    return null;
+  };
 
   const handlePerformSimClicked = async () => {
     if (ranking) {
@@ -78,6 +74,45 @@ export default function RunPage() {
       }
     }
   };
+
+  const [runs, setRuns] = useState<number>(10);
+  const [deaneries, setDeaneries] = useState<DeaneryModel[]>([]);
+  const [results, setResults] = useState<DetailedSimulationResult[]>([]);
+  const [ranking, setRanking] = useState<DeaneryModel[]>([]);
+  const [jobId, setJobId] = useState<string | null>(null);
+  const [progress, setProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+
+  useJobProgress(jobId, (update: JobProgress) => {
+    setProgress(Math.round(update.progress));
+  });
+
+  useEffect(() => {
+    getOptions().then((options) => {
+      if (options) {
+        const rankingFromLocalStorage = getRankingFromLocalStorage(options);
+        setRanking(rankingFromLocalStorage || options);
+        setDeaneries(options);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (progress >= 100 && jobId) {
+      getSimulationResults(jobId, runs, deaneries)
+        .then((detailedResults) => {
+          setJobId(null);
+          setProgress(0);
+          setResults(detailedResults);
+        })
+        .catch((error) => {
+          setError(
+            "An error occurred while fetching results. Please try again.",
+          );
+          console.error("Error fetching results:", error);
+        });
+    }
+  }, [progress]);
 
   return (
     <div className={styles.splitView}>
@@ -128,7 +163,7 @@ export default function RunPage() {
         <div className={styles.rankingPanel}>
           {ranking && (
             <DndProvider backend={HTML5Backend}>
-              <SortableList ranking={ranking} setRanking={setRanking} />
+              <SortableList ranking={ranking} updateRanking={updateRanking} />
             </DndProvider>
           )}
         </div>
