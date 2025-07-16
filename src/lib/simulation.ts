@@ -57,5 +57,6 @@ export async function getSimulationResults(
       chance: (1.0 * jsonResponse[intId]) / runs,
     };
   });
-  return detailedResults;
+  const sortedResults = detailedResults.sort((a, b) => b.chance - a.chance);
+  return sortedResults;
 }
