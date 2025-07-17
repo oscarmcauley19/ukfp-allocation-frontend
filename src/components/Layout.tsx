@@ -14,7 +14,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { AccountCircle, LowPriority, PlayCircle } from "@mui/icons-material";
+import { AccountCircle, PlayCircle } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import styles from "../styles/Layout.module.css"; // Import css modules stylesheet as styles
 import React from "react";
@@ -91,7 +91,7 @@ export default function Layout(props: { children: React.ReactNode }) {
           </Menu>
         </Toolbar>
       </AppBar>
-      <Drawer
+      {/* <Drawer
         variant="permanent"
         sx={{
           width: drawerWidth,
@@ -115,19 +115,9 @@ export default function Layout(props: { children: React.ReactNode }) {
                 </ListItemButton>
               </ListItem>
             </Link>
-            <Link to="/rankings" className={styles.menuBarLink}>
-              <ListItem key="rankings" disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <LowPriority />
-                  </ListItemIcon>
-                  <ListItemText primary="Rankings" />
-                </ListItemButton>
-              </ListItem>
-            </Link>
           </List>
         </Box>
-      </Drawer>
+      </Drawer> */}
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
         {children}

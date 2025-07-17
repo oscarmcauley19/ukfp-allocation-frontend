@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { HTML5Backend } from "react-dnd-html5-backend";
 import {
   Alert,
   Button,
@@ -10,7 +9,6 @@ import {
   Select,
   Typography,
 } from "@mui/material";
-import { DndProvider } from "react-dnd";
 
 import styles from "../styles/RunPage.module.css";
 import { createSimulationJob, getSimulationResults } from "../lib/simulation";
@@ -19,7 +17,7 @@ import { getOptions } from "../lib/rankingOptions";
 import { DetailedSimulationResult, JobProgress } from "../models/simultation";
 import { DeaneryModel } from "../models/deanery";
 import { ResultDisplay } from "./ResultDisplay";
-import SortableList from "./SortableList";
+import { DnDTable } from "./PreferenceTable";
 
 export default function RunPage() {
   const runOptions = [10, 25, 50, 100];
@@ -161,11 +159,7 @@ export default function RunPage() {
       </div>
       <div className={styles.leftSide}>
         <div className={styles.rankingPanel}>
-          {ranking && (
-            <DndProvider backend={HTML5Backend}>
-              <SortableList ranking={ranking} updateRanking={updateRanking} />
-            </DndProvider>
-          )}
+          {ranking && <DnDTable data={ranking} setData={updateRanking} />}
         </div>
       </div>
 
