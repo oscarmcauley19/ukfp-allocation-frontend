@@ -2,24 +2,15 @@ import {
   AppBar,
   Box,
   CssBaseline,
-  Drawer,
   IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
   Menu,
   MenuItem,
   Toolbar,
   Typography,
 } from "@mui/material";
-import { AccountCircle, PlayCircle } from "@mui/icons-material";
+import { AccountCircle } from "@mui/icons-material";
 import { Link } from "react-router-dom";
-import styles from "../styles/Layout.module.css"; // Import css modules stylesheet as styles
 import React from "react";
-
-const drawerWidth = 240;
 
 export default function Layout(props: { children: React.ReactNode }) {
   const { children } = props;
@@ -31,10 +22,6 @@ export default function Layout(props: { children: React.ReactNode }) {
   };
 
   const handleAccountMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleLoginClicked = () => {
     setAnchorEl(null);
   };
 
@@ -78,46 +65,13 @@ export default function Layout(props: { children: React.ReactNode }) {
             }}
             open={Boolean(anchorEl)}
             onClose={handleAccountMenuClose}
-            sx={
-              {
-                // display: { xs: 'block', md: 'none' },
-              }
-            }
           >
             <Link to="/login">
               <MenuItem onClick={handleAccountMenuClose}>Login</MenuItem>
             </Link>
-            {/* <MenuItem onClick={handleAccountMenuClose}>My account</MenuItem> */}
           </Menu>
         </Toolbar>
       </AppBar>
-      {/* <Drawer
-        variant="permanent"
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: {
-            width: drawerWidth,
-            boxSizing: "border-box",
-          },
-        }}
-      >
-        <Toolbar />
-        <Box sx={{ overflow: "auto" }}>
-          <List>
-            <Link to="/run" className={styles.menuBarLink}>
-              <ListItem key="run" disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <PlayCircle />
-                  </ListItemIcon>
-                  <ListItemText primary="Run Simulations" />
-                </ListItemButton>
-              </ListItem>
-            </Link>
-          </List>
-        </Box>
-      </Drawer> */}
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
         {children}

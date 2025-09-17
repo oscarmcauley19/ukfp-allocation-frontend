@@ -106,7 +106,7 @@ export const DnDTable = ({
         header: "Ratio",
         cell: ({ row, getValue }) => (
           <Tooltip
-            title={`For every place available in ${row.id}, ${row.original.deaneryName} people put it as their first choice.`}
+            title={`For every place available in ${row.original.deaneryName}, ${getValue()} people put it as their first choice.`}
           >
             <Typography color={scale(getValue()).toString()}>
               {getValue()}
@@ -122,8 +122,6 @@ export const DnDTable = ({
     () => data?.map(({ deaneryId }) => deaneryId.toString()),
     [data],
   );
-
-  //   const rerender = () => setData(() => makeData(20));
 
   const table = useReactTable({
     data,

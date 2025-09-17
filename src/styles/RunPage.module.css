@@ -23,8 +23,6 @@
 .rankingPanel {
   display: flex;
   flex-direction: column;
-  /* margin-top: 20px; */
-  /* margin-bottom: 20px; */
 }
 
 .runSimulationControls {
@@ -34,8 +32,3 @@
   justify-content: center;
   gap: 20px;
 }
-
-/* .splitView {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-} */
