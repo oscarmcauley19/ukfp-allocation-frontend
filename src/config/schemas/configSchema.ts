@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-export const configSchema = z.object({
-  API_URL: z.string().url(),
-});
+export const configSchema = z.object({});
 
 export type ConfigSchema = z.infer<typeof configSchema>;

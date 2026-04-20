@@ -9,9 +9,15 @@ export default defineConfig({
     port: parseInt(process.env.VITE_PORT || "3000", 10),
     proxy: {
       "/api": {
-        target: process.env.VITE_API_URL || "http://localhost:5000",
+        target: `http://${process.env.VITE_API_HOST}:${process.env.VITE_API_PORT}`,
         rewrite: (path) => path.replace(/^\/api/, ""),
         secure: false,
+      },
+      "/ws": {
+        target: `ws://${process.env.VITE_API_HOST}:${process.env.VITE_API_PORT}`,
+        ws: true,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/ws/, ""),
       },
     },
   },
