@@ -18,6 +18,7 @@ export default defineConfig({
         ws: true,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/ws/, ""),
+        secure: false,
       },
     },
   },
