@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { io } from "socket.io-client";
 import { JobProgress } from "../../models/simultation";
 
-const socket = io("/ws"); // TODO - proxy isn't working
+const socket = io("/", { path: "/ws/socket.io" });
 
 /**
  * Custom hook to subscribe to job progress updates via WebSocket.
