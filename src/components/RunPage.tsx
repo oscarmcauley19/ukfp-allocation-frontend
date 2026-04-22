@@ -129,8 +129,8 @@ export default function RunPage() {
           2. Run a simulation
         </Typography>
         <Typography textAlign={"left"} variant="body1">
-          Re-order the deaneries below and click &apos;run similation&apos; to
-          get your results.
+          Click &apos;run simulation&apos; to find out how you would fare with
+          your selected deanery preferences.
         </Typography>
         <div className={styles.runSimulationControls}>
           <FormControl sx={{ minWidth: 80 }}>
@@ -154,7 +154,7 @@ export default function RunPage() {
               ))}
             </Select>
           </FormControl>
-          <Button onClick={handlePerformSimClicked}>Perform Simulation</Button>
+          <Button onClick={handlePerformSimClicked}>Run Simulation</Button>
         </div>
       </div>
       <div className={styles.leftSide}>
